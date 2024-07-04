@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  user-service:
+    build: .
+    ports:
+      - "50051:50051"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=strive
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=strive
+    ports:
+      - "5432:5432"
