@@ -1,4 +1,5 @@
-FROM golang:1.18-alpine
+# Dockerfile
+FROM golang:1.16-alpine
 
 WORKDIR /app
 
@@ -6,10 +7,10 @@ COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 
-COPY . ./
+COPY *.go ./
 
-RUN go build -o /strive-backend ./cmd/user
+RUN go build -o /strive-backend
 
-EXPOSE 50051
+EXPOSE 8080
 
-CMD ["/strive-backend"]
+CMD [ "/strive-backend" ]
