@@ -12,3 +12,7 @@ type UserService struct {
 func (s *UserService) CreateUser(user *models.User) (ID int, err error) {
 	return s.Repo.CreateUser(user)
 }
+
+func (s *UserService) GetUser(ID int) (*models.User, error) {
+	return s.Repo.GetUserByID(ID)
+}
