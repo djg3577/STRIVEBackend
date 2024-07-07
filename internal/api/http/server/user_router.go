@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func InitUserRoutes(router *mux.Router, db *sql.DB){
+func InitUserRoutes(router *mux.Router, db *sql.DB) {
 	userRepo := &repository.UserRepository{DB: db}
 	userService := &service.UserService{Repo: userRepo}
 	userHandler := &handlers.UserHandler{Service: userService}

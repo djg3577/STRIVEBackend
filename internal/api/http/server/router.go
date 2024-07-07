@@ -1,17 +1,17 @@
 package server
 
 import (
-    "database/sql"
-    "github.com/gorilla/mux"
+	"database/sql"
+	"github.com/gorilla/mux"
 )
 
 func NewRouter(db *sql.DB) *mux.Router {
-    router := mux.NewRouter()
+	router := mux.NewRouter()
 
-    // Initialize sub-routers
-    InitUserRoutes(router, db)
-    InitActivityRoutes(router, db)
-    InitScoreRoutes(router, db)
+	// Initialize sub-routers
+	InitUserRoutes(router, db)
+	InitActivityRoutes(router, db)
+	InitScoreRoutes(router, db)
 
-    return router
+	return router
 }
