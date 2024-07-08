@@ -4,25 +4,26 @@ import (
 	"STRIVEBackend/internal/service"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ScoreHandler struct {
 	Service *service.ScoreService
 }
 
-func (h *ScoreHandler) GetDailyScore(w http.ResponseWriter, r *http.Request) {
-	userID, err := strconv.Atoi(r.URL.Query().Get("user_id"))
+func (h *ScoreHandler) GetDailyScore(c *gin.Context) {
+	userID, err := strconv.Atoi(c.Query("user_id"))
 	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		c.JSON((http.StatusBadRequest), gin.H{"error": "Invalid user ID"})
 		return
 	}
 
 	score, err := h.Service.CalculateDailyScore(userID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(strconv.Itoa(score)))
+	c.String(http.StatusOK, strconv.Itoa(score))
 }

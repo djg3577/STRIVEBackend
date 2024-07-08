@@ -6,14 +6,17 @@ import (
 	"STRIVEBackend/internal/service"
 	"database/sql"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
-func InitActivityRoutes(router *mux.Router, db *sql.DB) {
+func InitActivityRoutes(router *gin.Engine, db *sql.DB) {
 	activityRepo := &repository.ActivityRepository{DB: db}
 	activityService := &service.ActivityService{Repo: activityRepo}
 	activityHandler := &handlers.ActivityHandler{Service: activityService}
 
-	activityRouter := router.PathPrefix("/activities").Subrouter()
-	activityRouter.HandleFunc("", activityHandler.LogActivity).Methods("POST")
+	activityGroup := router.Group("/activities")
+	{
+		activityGroup.POST("", activityHandler.LogActivity)
+
+	}
 }

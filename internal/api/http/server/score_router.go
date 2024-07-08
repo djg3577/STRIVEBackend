@@ -6,15 +6,17 @@ import (
 	"STRIVEBackend/internal/service"
 	"database/sql"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
-func InitScoreRoutes(router *mux.Router, db *sql.DB) {
+func InitScoreRoutes(router *gin.Engine, db *sql.DB) {
 	activityRepo := &repository.ActivityRepository{DB: db}
 	scoreService := &service.ScoreService{Repo: activityRepo}
 	scoreHandler := &handlers.ScoreHandler{Service: scoreService}
 
-	scoreRouter := router.PathPrefix("/scores").Subrouter()
-	scoreRouter.HandleFunc("/daily", scoreHandler.GetDailyScore).Methods("GET")
+	scoreGroup := router.Group("/scores")
+	{
+		scoreGroup.GET("/daily", scoreHandler.GetDailyScore)
+	}
 
 }

@@ -3,33 +3,33 @@ package handlers
 import (
 	"STRIVEBackend/internal/service"
 	"STRIVEBackend/pkg/models"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ActivityHandler struct {
 	Service *service.ActivityService
 }
 
-func (h *ActivityHandler) LogActivity(w http.ResponseWriter, r *http.Request) {
+func (h *ActivityHandler) LogActivity(c *gin.Context) {
 	var activity models.Activity
-	if err := json.NewDecoder(r.Body).Decode(&activity); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := c.BindJSON(&activity); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	parsedDate, err := time.Parse("2006-01-02", activity.Date)
 	if err != nil {
-		http.Error(w, "Invalid date format. Use YYYY-MM-DD", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format. Use YYYY-MM-DD"})
 		return
 	}
 	activity.Date = parsedDate.Format("2006-01-02")
 	missingFields := []string{}
 
-	// !! FIX THESE IF STATEMENTS THEY LOOK BAD LOL
 	if activity.UserID == 0 {
 		missingFields = append(missingFields, "UserID")
 	}
@@ -41,14 +41,14 @@ func (h *ActivityHandler) LogActivity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(missingFields) > 0 {
-		http.Error(w, fmt.Sprintf("Missing required fields: %s", strings.Join(missingFields, ", ")), http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Missing required fields: %s", strings.Join(missingFields, ", "))})
 		return
 	}
 
 	if err := h.Service.LogActivity(&activity); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	c.JSON(http.StatusCreated, gin.H{"message": "Activity logged successfully"})
 }
