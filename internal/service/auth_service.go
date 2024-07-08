@@ -54,7 +54,6 @@ func (s *AuthService) SignUp(user *models.User) (int, error) {
 	// if err = s.sendVerificationEmail(user.Email, verificationCode); err != nil {
 	// 	return 0, fmt.Errorf("failed to send verification email: %w", err)
 	// }
-	fmt.Println("Verification code: ", verificationCode)
 
 	return userID, nil
 }
@@ -93,7 +92,6 @@ func (s *AuthService) sendVerificationEmail(email string, code string) error {
 
 func (s *AuthService) VerifyEmail(email string, code int) error {
 	user, err := s.Repo.GetUserByEmail(email)
-	fmt.Println("THIS IS THE USER: ", user)
 	if err != nil {
 		return fmt.Errorf("failed to get user by email: %w", err)
 	}
@@ -101,8 +99,6 @@ func (s *AuthService) VerifyEmail(email string, code int) error {
 	if user.EmailVerified {
 		return errors.New("email already verified")
 	}
-	fmt.Println("THIS IS THE USER CODE: ", user.Code)
-	fmt.Println("THIS IS THE CODE: ", code)
 	if user.Code != code {
 		return errors.New("invalid verification code")
 	}
@@ -134,6 +130,5 @@ func (s *AuthService) AuthenticateUser(authHeader string) (*models.User, error) 
 }
 
 func (s *AuthService) DecodeJWT(token string) (*models.User, error) {
-	fmt.Println("THIS IS THE TOKEN: ", token)
 	return s.Repo.DecodeJWT(token)
 }
