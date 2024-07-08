@@ -16,11 +16,12 @@ type Claims struct {
 }
 
 func GenerateToken(userID int) (string, error) {
+	expirationTime := time.Now().AddDate(0, 1, 0) 
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": userID,
 		"iss": "strive",
 		"aud": "users",
-		"exp": time.Now().Add(time.Hour).Unix(),
+		"exp": expirationTime.Unix(),
 		"iat": time.Now().Unix(),
 	})
 	tokenString, err := claims.SignedString(jwtKey)

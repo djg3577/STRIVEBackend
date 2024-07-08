@@ -4,7 +4,6 @@ import (
 	"STRIVEBackend/internal/util"
 	"STRIVEBackend/pkg/models"
 	"database/sql"
-	"fmt"
 )
 
 type AuthRepository struct {
