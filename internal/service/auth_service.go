@@ -5,9 +5,11 @@ import (
 	"STRIVEBackend/pkg/models"
 	"errors"
 	"fmt"
-	"gopkg.in/mail.v2"
 	"math/rand"
 	"os"
+	"strings"
+
+	"gopkg.in/mail.v2"
 )
 
 type AuthService struct {
@@ -108,6 +110,30 @@ func (s *AuthService) VerifyEmail(email string, code int) error {
 	return s.Repo.VerifyUserEmail(user.ID)
 }
 
+func (s *AuthService) AuthenticateUser(authHeader string) (*models.User, error) {
+	if authHeader == "" {
+		return nil, fmt.Errorf("missing Authorization header")
+	}
+
+	parts := strings.Split(authHeader, " ")
+	if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
+		return nil, fmt.Errorf("invalid Authorization header")
+	}
+
+	token := parts[1]
+	if token == "" {
+		return nil, fmt.Errorf("missing token")
+	}
+
+	user, err := s.DecodeJWT(token)
+	if err != nil {
+		return nil, fmt.Errorf("error decoding JWT: %w", err)
+	}
+
+	return user, nil
+}
+
 func (s *AuthService) DecodeJWT(token string) (*models.User, error) {
+	fmt.Println("THIS IS THE TOKEN: ", token)
 	return s.Repo.DecodeJWT(token)
 }

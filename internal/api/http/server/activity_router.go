@@ -13,10 +13,13 @@ func InitActivityRoutes(router *gin.Engine, db *sql.DB) {
 	activityRepo := &repository.ActivityRepository{DB: db}
 	activityService := &service.ActivityService{Repo: activityRepo}
 	activityHandler := &handlers.ActivityHandler{Service: activityService}
+	authRepo := &repository.AuthRepository{DB: db}
+	authService := &service.AuthService{Repo: authRepo}
+	authHandler := &handlers.AuthHandler{Service: authService}
 
 	activityGroup := router.Group("/activities")
 	{
 		activityGroup.POST("", activityHandler.LogActivity)
-
+		activityGroup.GET("", authHandler.AuthMiddleware(), activityHandler.GetActivityTotals)
 	}
 }

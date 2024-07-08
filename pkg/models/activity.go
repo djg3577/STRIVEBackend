@@ -7,3 +7,7 @@ type Activity struct {
 	Duration int    `json:"duration"` // Duration in minutes
 	Date     string `json:"date"`
 }
+
+type ActivityTotals struct {
+	ActivityTotals map[string]int `json:"activity_totals"`
+}

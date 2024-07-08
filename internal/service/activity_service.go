@@ -12,3 +12,7 @@ type ActivityService struct {
 func (s *ActivityService) LogActivity(activity *models.Activity) error {
 	return s.Repo.CreateActivity(activity)
 }
+
+func (s *ActivityService) GetActivityTotals(userID int) (*models.ActivityTotals, error) {
+	return s.Repo.GetActivityTotals(userID)
+}

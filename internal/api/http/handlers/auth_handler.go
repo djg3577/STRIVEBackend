@@ -15,27 +15,29 @@ type AuthHandler struct {
 }
 
 func (h *AuthHandler) DecodeJWT(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	if authHeader == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing Authorization header"})
-		return
-	}
-
-	parts := strings.Split(authHeader, " ")
-	if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Authorization header"})
-		return
-	}
-
-	token := parts[1]
-
-	user, err := h.Service.DecodeJWT(token)
+	user, err := h.Service.AuthenticateUser(c.GetHeader("Authorization"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "ERROR DECODING JWT" + err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+func (h *AuthHandler) AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, err := h.Service.AuthenticateUser(c.GetHeader("Authorization"))
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			c.Abort()
+			return
+		}
+
+		c.Set("user", user)
+		c.Set("userID", user.ID)
+
+		c.Next()
+	}
 }
 
 func (h *AuthHandler) Login(c *gin.Context) {

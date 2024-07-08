@@ -4,6 +4,7 @@ import (
 	"STRIVEBackend/internal/util"
 	"STRIVEBackend/pkg/models"
 	"database/sql"
+	"fmt"
 )
 
 type AuthRepository struct {
@@ -33,17 +34,18 @@ func (r *AuthRepository) VerifyUserEmail(userID int) error {
 }
 
 func (r *AuthRepository) DecodeJWT(token string) (*models.User, error) {
+	fmt.Println("INSIDE OF DECODOING JWT: asdasd")
 	userID, err := util.ValidateJWT(token)
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println("USERID: ", userID)
 	var user models.User
 	err = r.DB.QueryRow("SELECT id, username, email FROM users WHERE id = $1", userID).Scan(
 		&user.ID, &user.Username, &user.Email)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
-
+	fmt.Println("USER: ", user)
 	return &user, nil
 }

@@ -52,3 +52,20 @@ func (h *ActivityHandler) LogActivity(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Activity logged successfully"})
 }
+
+func (h *ActivityHandler) GetActivityTotals(c *gin.Context) {
+	fmt.Println("GetActivityTotals")
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	activity_totals, err := h.Service.GetActivityTotals(userID.(int))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error: ERROR IN GETTING ACTIVITY TOTALS": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, activity_totals)
+}
