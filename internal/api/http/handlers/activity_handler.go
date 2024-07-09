@@ -47,8 +47,8 @@ func (h *ActivityHandler) LogActivity(c *gin.Context) {
 	if activity.UserID == 0 {
 		missingFields = append(missingFields, "UserID")
 	}
-	if activity.Type == "" {
-		missingFields = append(missingFields, "Type")
+	if activity.ActivityName == "" {
+		missingFields = append(missingFields, "ActivityName")
 	}
 	if activity.Duration == 0 {
 		missingFields = append(missingFields, "Duration")

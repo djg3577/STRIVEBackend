@@ -16,7 +16,7 @@ type Claims struct {
 }
 
 func GenerateToken(userID int) (string, error) {
-	expirationTime := time.Now().AddDate(0, 1, 0) 
+	expirationTime := time.Now().AddDate(0, 1, 0)
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": userID,
 		"iss": "strive",

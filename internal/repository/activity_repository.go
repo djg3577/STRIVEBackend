@@ -10,13 +10,13 @@ type ActivityRepository struct {
 }
 
 func (r *ActivityRepository) CreateActivity(activity *models.Activity) error {
-	_, err := r.DB.Exec("INSERT INTO activities (user_id, type, duration, date) VALUES ($1, $2, $3, $4)",
-		activity.UserID, activity.Type, activity.Duration, activity.Date)
+	_, err := r.DB.Exec("INSERT INTO activities (user_id, activity_name, duration, date) VALUES ($1, $2, $3, $4)",
+		activity.UserID, activity.ActivityName, activity.Duration, activity.Date)
 	return err
 }
 
 func (r *ActivityRepository) GetActivityTotals(userID int) (*models.ActivityTotals, error) {
-	rows, err := r.DB.Query("SELECT type, SUM(duration) FROM activities WHERE user_id = $1 GROUP BY type", userID)
+	rows, err := r.DB.Query("SELECT activity_name, total_duration FROM activity_summary WHERE user_id = $1", userID)
 	if err != nil {
 		return nil, err
 	}
@@ -24,12 +24,13 @@ func (r *ActivityRepository) GetActivityTotals(userID int) (*models.ActivityTota
 
 	activityTotals := models.ActivityTotals{ActivityTotals: make(map[string]int)}
 	for rows.Next() {
-		var activityType string
+		var activityName string
 		var totalDuration int
-		if err := rows.Scan(&activityType, &totalDuration); err != nil {
+
+		if err := rows.Scan(&activityName, &totalDuration); err != nil {
 			return nil, err
 		}
-		activityTotals.ActivityTotals[activityType] = totalDuration
+		activityTotals.ActivityTotals[activityName] = totalDuration
 	}
 
 	return &activityTotals, nil
