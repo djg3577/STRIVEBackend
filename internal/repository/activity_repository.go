@@ -3,6 +3,8 @@ package repository
 import (
 	"STRIVEBackend/pkg/models"
 	"database/sql"
+	"fmt"
+	"time"
 )
 
 type ActivityRepository struct {
@@ -34,4 +36,35 @@ func (r *ActivityRepository) GetActivityTotals(userID int) (*models.ActivityTota
 	}
 
 	return &activityTotals, nil
+}
+
+func (r *ActivityRepository) GetActivityDates(userID int) (*models.ActivityDates, error) {
+	rows, err := r.DB.Query("SELECT date, COUNT(*) FROM activities WHERE user_id = $1 GROUP BY date", userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	activityDates := models.ActivityDates{ActivityDates: make([]models.ActivityDate, 0)}
+	for rows.Next() {
+		var date string
+		var count int
+
+		if err := rows.Scan(&date, &count); err != nil {
+			return nil, err
+		}
+
+		parsedDate, err := time.Parse(time.RFC3339, date)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing date: %v", err)
+		}
+		formattedDate := parsedDate.Format("2006-01-02")
+		activityDates.ActivityDates = append(activityDates.ActivityDates, models.ActivityDate{Date: formattedDate, Count: count})
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return &activityDates, nil
 }

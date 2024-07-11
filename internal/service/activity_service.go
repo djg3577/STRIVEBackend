@@ -16,3 +16,7 @@ func (s *ActivityService) LogActivity(activity *models.Activity) error {
 func (s *ActivityService) GetActivityTotals(userID int) (*models.ActivityTotals, error) {
 	return s.Repo.GetActivityTotals(userID)
 }
+
+func (s *ActivityService) GetActivityDates(userID int) (*models.ActivityDates, error) {
+	return s.Repo.GetActivityDates(userID)
+}

@@ -11,3 +11,12 @@ type Activity struct {
 type ActivityTotals struct {
 	ActivityTotals map[string]int `json:"activity_totals"`
 }
+
+type ActivityDates struct {
+	ActivityDates []ActivityDate `json:"activity_dates"`
+}
+
+type ActivityDate struct {
+	Date  string `json:"date"`
+	Count int    `json:"count"`
+}

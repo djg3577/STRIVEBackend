@@ -50,6 +50,7 @@ func (h *ActivityHandler) LogActivity(c *gin.Context) {
 	if activity.ActivityName == "" {
 		missingFields = append(missingFields, "ActivityName")
 	}
+	activity.ActivityName = strings.ToUpper(activity.ActivityName)
 	if activity.Duration == 0 {
 		missingFields = append(missingFields, "Duration")
 	}
@@ -81,4 +82,20 @@ func (h *ActivityHandler) GetActivityTotals(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, activity_totals)
+}
+
+func (h *ActivityHandler) GetActivityDates(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	activity_dates, err := h.Service.GetActivityDates(userID.(int))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Error in getting activity dates:": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, activity_dates)
 }
