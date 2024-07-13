@@ -71,7 +71,7 @@ func (h *LeaderboardHandler) fetchAndBroadcastTopScores() {
 			continue
 		}
 		broadcast <- topScores
-		time.Sleep(10 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 }
 
