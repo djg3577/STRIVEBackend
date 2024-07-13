@@ -13,6 +13,7 @@ func NewRouter(db *sql.DB) *gin.Engine {
 	InitActivityRoutes(router, db)
 	InitScoreRoutes(router, db)
 	InitAuthRoutes(router, db)
+	InitWebLeaderboardRoutes(router, db)
 
 	return router
 }
