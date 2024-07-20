@@ -8,7 +8,6 @@ import (
 func NewRouter(db *sql.DB) *gin.Engine {
 	router := gin.Default()
 
-	// Initialize sub-routers
 	InitUserRoutes(router, db)
 	InitActivityRoutes(router, db)
 	InitScoreRoutes(router, db)

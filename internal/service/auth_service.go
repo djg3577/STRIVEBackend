@@ -157,7 +157,7 @@ func (s *AuthService) GetGitHubUser(token string) (*models.GitHubUser, error) {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Authorization", "Bearer "+ token)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -183,6 +183,7 @@ func (s *AuthService) ExchangeGitHubCode(code string) (string, *models.GitHubUse
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	clientSecret := os.Getenv("GITHUB_CLIENT_SECRET")
 	redirectURI := os.Getenv("GITHUB_REDIRECT_URI")
+	fmt.Print(redirectURI)
 
 	tokenURL := "https://github.com/login/oauth/access_token"
 
