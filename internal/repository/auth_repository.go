@@ -45,3 +45,15 @@ func (r *AuthRepository) DecodeJWT(token string) (*models.User, error) {
 	}
 	return &user, nil
 }
+
+func (r *AuthRepository) GetUserIdByGithubId(githubUserId int) (int, error) {
+	var userId int
+	err := r.DB.QueryRow("SELECT id FROM users WHERE github_id = $1", githubUserId).Scan(&userId)
+	return userId, err
+}
+
+func (r *AuthRepository) CreateUserFromGithub(githubUserId int) (int, error) {
+	var userId int
+	err := r.DB.QueryRow("INSERT INTO users (github_id) VALUES ($1) RETURNING id", githubUserId).Scan(&userId)
+	return userId, err
+}

@@ -19,8 +19,8 @@ func InitActivityRoutes(router *gin.Engine, db *sql.DB) {
 
 	activityGroup := router.Group("/activities")
 	{
-		activityGroup.POST("", activityHandler.LogActivity)
-		activityGroup.GET("", authHandler.AuthMiddleware(), activityHandler.GetActivityTotals)
-		activityGroup.GET("/dates", authHandler.AuthMiddleware(), activityHandler.GetActivityDates)
+		activityGroup.POST("", authHandler.GitHubAuthMiddleware(), activityHandler.LogActivity)
+		activityGroup.GET("", authHandler.GitHubAuthMiddleware(), activityHandler.GetActivityTotals)
+		activityGroup.GET("/dates", authHandler.GitHubAuthMiddleware(), activityHandler.GetActivityDates)
 	}
 }

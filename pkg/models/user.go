@@ -8,3 +8,8 @@ type User struct {
 	Code          int    `json:"code"`
 	EmailVerified bool   `json:"email_verified"`
 }
+
+type GitHubUser struct {
+	Login string `json:"login"`
+	ID int `json:"id"`
+}

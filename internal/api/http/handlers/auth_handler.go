@@ -20,7 +20,6 @@ func (h *AuthHandler) DecodeJWT(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "ERROR DECODING JWT" + err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, user)
 }
 
@@ -120,4 +119,62 @@ func (h *AuthHandler) VerifyEmail(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Email verified successfully"})
+}
+
+
+func (h *AuthHandler) GitHubAuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+			authHeader := c.GetHeader("Authorization")
+			if authHeader == "" {
+					c.JSON(http.StatusUnauthorized, gin.H{"error": "No authorization header provided"})
+					c.Abort()
+					return
+			}
+
+			bearerToken := strings.Split(authHeader, " ")
+			if len(bearerToken) != 2 {
+					c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
+					c.Abort()
+					return
+			}
+
+			token := bearerToken[1]
+			githubUser, err := h.Service.GetGitHubUser(token)
+			if err != nil {
+					c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid GitHub token"})
+					c.Abort()
+					return
+			}
+
+			internalUserId, err := h.Service.GetOrCreateUserIdFromGithub(githubUser.ID)
+			if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get or create user from GitHub"})
+					c.Abort()
+					return
+			}
+
+			// Store the GitHub user ID in the context
+			c.Set("githubUserId", githubUser.ID)
+			c.Set("userID", internalUserId)
+			c.Next()
+	}
+}
+
+func (h *AuthHandler) GitHubLogin(c *gin.Context){
+	var request struct {
+		Code string `json:"code" binding:"required"`
+	}
+
+	if err := c.BindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	token, user, err := h.Service.ExchangeGitHubCode(request.Code)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error github auth failed:": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": token, "user": user})
 }

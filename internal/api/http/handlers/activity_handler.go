@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
 	"github.com/gin-gonic/gin"
+	
 )
 
 type ActivityHandler struct {
@@ -35,7 +35,6 @@ func (h *ActivityHandler) LogActivity(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 	parsedDate, err := time.Parse("2006-01-02", activity.Date)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format. Use YYYY-MM-DD"})
@@ -43,6 +42,21 @@ func (h *ActivityHandler) LogActivity(c *gin.Context) {
 	}
 	activity.Date = parsedDate.Format("2006-01-02")
 	missingFields := []string{}
+
+	githubUserId, exists := c.Get("githubUserId")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not authenticated"})
+		return
+	}
+	/// convert the GITHUB user id to internal
+	internalUserId, err := h.Service.GetOrCreateUserIdFromGithub(githubUserId.(int))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error in getting user id from github id"})
+		return
+	}
+	// !! NEXT STEP IS IF THEIR IS NO GIT HUB ID ATTACHED WE INSERT AND ON INSERT WE MATCH TO THE CURRENT USER ID
+
+	activity.UserID = internalUserId
 
 	if activity.UserID == 0 {
 		missingFields = append(missingFields, "UserID")

@@ -20,5 +20,6 @@ func InitAuthRoutes(router *gin.Engine, db *sql.DB) {
 		authGroup.POST("/login", authHandler.Login)
 		authGroup.POST("/sign-up", authHandler.SignUp)
 		authGroup.POST("/verify-email", authHandler.VerifyEmail)
+		authGroup.POST("/github", authHandler.GitHubLogin)
 	}
 }
