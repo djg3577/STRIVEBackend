@@ -184,6 +184,7 @@ func (s *AuthService) ExchangeGitHubCode(code string) (string, *models.GitHubUse
 	clientSecret := os.Getenv("GITHUB_CLIENT_SECRET")
 	redirectURI := os.Getenv("GITHUB_REDIRECT_URI")
 	fmt.Print(redirectURI)
+	fmt.Println()
 
 	tokenURL := "https://github.com/login/oauth/access_token"
 
