@@ -8,11 +8,13 @@ import (
 func NewRouter(db *sql.DB) *gin.Engine {
 	router := gin.Default()
 
-	InitUserRoutes(router, db)
-	InitActivityRoutes(router, db)
-	InitScoreRoutes(router, db)
-	InitAuthRoutes(router, db)
-	InitWebLeaderboardRoutes(router, db)
+	api := router.Group("/api")
+
+	InitUserRoutes(api, db)
+	InitActivityRoutes(api, db)
+	InitScoreRoutes(api, db)
+	InitAuthRoutes(api, db)
+	InitWebLeaderboardRoutes(api, db)
 
 	return router
 }

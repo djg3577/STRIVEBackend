@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitActivityRoutes(router *gin.Engine, db *sql.DB) {
+func InitActivityRoutes(api *gin.RouterGroup, db *sql.DB) {
 	activityRepo := &repository.ActivityRepository{DB: db}
 	activityService := &service.ActivityService{Repo: activityRepo}
 	activityHandler := &handlers.ActivityHandler{Service: activityService}
@@ -17,7 +17,7 @@ func InitActivityRoutes(router *gin.Engine, db *sql.DB) {
 	authService := &service.AuthService{Repo: authRepo}
 	authHandler := &handlers.AuthHandler{Service: authService}
 
-	activityGroup := router.Group("/activities")
+	activityGroup := api.Group("/activities")
 	{
 		activityGroup.POST("", authHandler.GitHubAuthMiddleware(), activityHandler.LogActivity)
 		activityGroup.GET("", authHandler.GitHubAuthMiddleware(), activityHandler.GetActivityTotals)

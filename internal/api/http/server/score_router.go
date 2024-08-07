@@ -9,12 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitScoreRoutes(router *gin.Engine, db *sql.DB) {
+func InitScoreRoutes(api *gin.RouterGroup, db *sql.DB) {
 	activityRepo := &repository.ActivityRepository{DB: db}
 	scoreService := &service.ScoreService{Repo: activityRepo}
 	scoreHandler := &handlers.ScoreHandler{Service: scoreService}
 
-	scoreGroup := router.Group("/scores")
+	scoreGroup := api.Group("/scores")
 	{
 		scoreGroup.GET("/daily", scoreHandler.GetDailyScore)
 	}

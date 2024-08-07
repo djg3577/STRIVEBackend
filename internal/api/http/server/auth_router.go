@@ -9,12 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitAuthRoutes(router *gin.Engine, db *sql.DB) {
+func InitAuthRoutes(api *gin.RouterGroup, db *sql.DB) {
 	authRepo := &repository.AuthRepository{DB: db}
 	authService := &service.AuthService{Repo: authRepo}
 	authHandler := &handlers.AuthHandler{Service: authService}
 
-	authGroup := router.Group("/auth")
+	authGroup := api.Group("/auth")
 	{
 		authGroup.POST("/decode-jwt", authHandler.DecodeJWT)
 		authGroup.POST("/login", authHandler.Login)

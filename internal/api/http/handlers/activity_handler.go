@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
 	"github.com/gin-gonic/gin"
-	
 )
 
 type ActivityHandler struct {
@@ -42,17 +42,23 @@ func (h *ActivityHandler) LogActivity(c *gin.Context) {
 	}
 	activity.Date = parsedDate.Format("2006-01-02")
 	missingFields := []string{}
-
-	githubUserId, exists := c.Get("githubUserId")
+	githubUserInterface, exists := c.Get("githubUser")
 	if !exists {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not authenticated"})
-		return
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "User not authenticated", "githubUser": githubUserInterface, "exists": exists})
+			return
 	}
-	/// convert the GITHUB user id to internal
-	internalUserId, err := h.Service.GetOrCreateUserIdFromGithub(githubUserId.(int))
+	
+	githubUser, ok := githubUserInterface.(*models.GitHubUser)
+	if !ok {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user data", "githubUser": githubUserInterface, "exists": exists})
+			return
+	}
+	
+	// Now use githubUser
+	internalUserId, err := h.Service.GetOrCreateUserIdFromGithub(githubUser)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error in getting user id from github id"})
-		return
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error in getting user id from github id"})
+			return
 	}
 	// !! NEXT STEP IS IF THEIR IS NO GIT HUB ID ATTACHED WE INSERT AND ON INSERT WE MATCH TO THE CURRENT USER ID
 

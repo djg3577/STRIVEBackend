@@ -75,8 +75,8 @@ func (r *ActivityRepository) GetUserIdByGithubId(githubUserId int) (int, error) 
 	return userId, err
 }
 
-func (r *ActivityRepository) CreateUserFromGithub(githubUserId int) (int, error) {
+func (r *ActivityRepository) CreateUserFromGithub(githubUser *models.GitHubUser) (int, error) {
 	var userId int
-	err := r.DB.QueryRow("INSERT INTO users (github_id) VALUES ($1) RETURNING id", githubUserId).Scan(&userId)
+	err := r.DB.QueryRow("INSERT INTO users (github_id, username) VALUES ($1, $2) RETURNING id", githubUser.ID, githubUser.Login).Scan(&userId)
 	return userId, err
 }

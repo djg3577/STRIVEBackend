@@ -4,6 +4,7 @@ import (
 	"STRIVEBackend/internal/service"
 	"STRIVEBackend/internal/util"
 	"STRIVEBackend/pkg/models"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -125,6 +126,7 @@ func (h *AuthHandler) VerifyEmail(c *gin.Context) {
 func (h *AuthHandler) GitHubAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 			authHeader := c.GetHeader("Authorization")
+			fmt.Println()
 			if authHeader == "" {
 					c.JSON(http.StatusUnauthorized, gin.H{"error": "No authorization header provided"})
 					c.Abort()
@@ -145,8 +147,8 @@ func (h *AuthHandler) GitHubAuthMiddleware() gin.HandlerFunc {
 					c.Abort()
 					return
 			}
-
-			internalUserId, err := h.Service.GetOrCreateUserIdFromGithub(githubUser.ID)
+// !! NEED TO FIX DUPLICATE CODE HERE
+			internalUserId, err := h.Service.GetOrCreateUserIdFromGithub(githubUser)
 			if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get or create user from GitHub"})
 					c.Abort()
@@ -154,8 +156,9 @@ func (h *AuthHandler) GitHubAuthMiddleware() gin.HandlerFunc {
 			}
 
 			// Store the GitHub user ID in the context
-			c.Set("githubUserId", githubUser.ID)
 			c.Set("userID", internalUserId)
+			c.Set("githubUser", githubUser)
+			fmt.Println("GitHub user: ", githubUser)
 			c.Next()
 	}
 }

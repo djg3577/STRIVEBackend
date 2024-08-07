@@ -8,12 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitWebLeaderboardRoutes(router *gin.Engine, db *sql.DB) {
+func InitWebLeaderboardRoutes(api *gin.RouterGroup, db *sql.DB) {
 	leaderboardRepo := &repository.LeaderBoardRepository{DB: db}
 	leaderboardService := &service.LeaderboardService{Repo: leaderboardRepo}
 	leaderboardHandler := &handlers.LeaderboardHandler{Service: leaderboardService}
 
-	router.GET("/ws", leaderboardHandler.HandleWebSocket)
+	api.GET("/ws", leaderboardHandler.HandleWebSocket)
 
 	leaderboardHandler.InitWebSocketHandler()
 }
