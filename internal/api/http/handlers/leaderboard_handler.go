@@ -11,8 +11,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type LeaderboardHandler struct {
-	Service *service.LeaderboardService
+type LeaderBoardHandler struct {
+	Service *service.LeaderBoardService
 }
 
 var clients = make(map[*websocket.Conn]bool)
@@ -25,7 +25,7 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func (h *LeaderboardHandler) HandleWebSocket(c *gin.Context) {
+func (h *LeaderBoardHandler) HandleWebSocket(c *gin.Context) {
 	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println("Failed to upgrade to WebSocket:", err)
@@ -49,7 +49,7 @@ func (h *LeaderboardHandler) HandleWebSocket(c *gin.Context) {
 	log.Println("Client disconnected")
 }
 
-func (h *LeaderboardHandler) handleMessages() {
+func (h *LeaderBoardHandler) handleMessages() {
 	for {
 		msg := <-broadcast
 		for client := range clients {
@@ -63,7 +63,7 @@ func (h *LeaderboardHandler) handleMessages() {
 	}
 }
 
-func (h *LeaderboardHandler) fetchAndBroadcastTopScores() {
+func (h *LeaderBoardHandler) fetchAndBroadcastTopScores() {
 	for {
 		topScores, err := h.Service.GetTopScores()
 		if err != nil {
@@ -75,7 +75,7 @@ func (h *LeaderboardHandler) fetchAndBroadcastTopScores() {
 	}
 }
 
-func (h *LeaderboardHandler) InitWebSocketHandler() {
+func (h *LeaderBoardHandler) InitWebSocketHandler() {
 	go h.handleMessages()
 	go h.fetchAndBroadcastTopScores()
 }

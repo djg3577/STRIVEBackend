@@ -8,8 +8,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+func init(){
+	RegisterRoutes(ScoreRoutes)
+}
 
-func InitScoreRoutes(api *gin.RouterGroup, db *sql.DB) {
+func ScoreRoutes(api *gin.RouterGroup, db *sql.DB) {
 	activityRepo := &repository.ActivityRepository{DB: db}
 	scoreService := &service.ScoreService{Repo: activityRepo}
 	scoreHandler := &handlers.ScoreHandler{Service: scoreService}

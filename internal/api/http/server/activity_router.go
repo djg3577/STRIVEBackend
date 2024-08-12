@@ -9,6 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func init(){
+	RegisterRoutes(InitActivityRoutes)
+}
+
 func InitActivityRoutes(api *gin.RouterGroup, db *sql.DB) {
 	activityRepo := &repository.ActivityRepository{DB: db}
 	activityService := &service.ActivityService{Repo: activityRepo}

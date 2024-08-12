@@ -15,19 +15,27 @@ type Config struct {
 	DBPort     string
 }
 
-func LoadConfig() (*Config, error) {
+type ConfigLoader interface {
+	Load() *Config
+}
+
+type EnvConfigLoader struct{}
+
+func (e *EnvConfigLoader) Load() *Config {
 	err := godotenv.Load()
 	if err != nil {
 		log.Printf("Error loading .env file: %v", err)
 	}
 
-	config := &Config{
+	return &Config{
 		DBUser:     os.Getenv("DB_USER"),
 		DBPassword: os.Getenv("DB_PASSWORD"),
 		DBName:     os.Getenv("DB_NAME"),
 		DBHost:     os.Getenv("DB_HOST"),
 		DBPort:     os.Getenv("DB_PORT"),
 	}
+}
 
-	return config, nil
+func LoadConfig(loader ConfigLoader) *Config {
+	return loader.Load()
 }

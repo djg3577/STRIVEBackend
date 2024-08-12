@@ -9,7 +9,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitUserRoutes(api *gin.RouterGroup, db *sql.DB) {
+func init(){
+	RegisterRoutes(UserRoutes)
+}
+
+func UserRoutes(api *gin.RouterGroup, db *sql.DB) {
 	userRepo := &repository.UserRepository{DB: db}
 	userService := &service.UserService{Repo: userRepo}
 	userHandler := &handlers.UserHandler{Service: userService}

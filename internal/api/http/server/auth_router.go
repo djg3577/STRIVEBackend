@@ -8,6 +8,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+func init(){
+	RegisterRoutes(InitAuthRoutes)
+}
 
 func InitAuthRoutes(api *gin.RouterGroup, db *sql.DB) {
 	authRepo := &repository.AuthRepository{DB: db}

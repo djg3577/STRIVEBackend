@@ -5,16 +5,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(db *sql.DB) *gin.Engine {
+var RouteRegistry []func(*gin.RouterGroup, *sql.DB)
+
+func RegisterRoutes(initFunc func(*gin.RouterGroup, *sql.DB)){
+	RouteRegistry = append(RouteRegistry, initFunc)
+}
+
+func SetupRouter(db *sql.DB) *gin.Engine {
 	router := gin.Default()
 
 	api := router.Group("/api")
 
-	InitUserRoutes(api, db)
-	InitActivityRoutes(api, db)
-	InitScoreRoutes(api, db)
-	InitAuthRoutes(api, db)
-	InitWebLeaderboardRoutes(api, db)
+	for _, initFunc := range RouteRegistry {
+		initFunc(api, db)
+	}
 
 	return router
 }
