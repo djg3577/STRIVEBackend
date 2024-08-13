@@ -109,42 +109,42 @@ func (s *AuthService) VerifyEmail(email string, code int) error {
 
 	return s.Repo.VerifyUserEmail(user.ID)
 }
-
+// ! Need to add destructure more logic out of this function so that its extendable instead of modifiable and single reason to change
 func (s *AuthService) AuthenticateUser(authHeader string) (*models.User, error) {
 	if authHeader == "" {
-			return nil, fmt.Errorf("missing Authorization header")
+		return nil, fmt.Errorf("missing Authorization header")
 	}
 
 	parts := strings.Split(authHeader, " ")
 	if len(parts) != 2 || (strings.ToLower(parts[0]) != "bearer" && strings.ToLower(parts[0]) != "github") {
-			return nil, fmt.Errorf("invalid Authorization header")
+		return nil, fmt.Errorf("invalid Authorization header")
 	}
 
 	token := parts[1]
 	if token == "" {
-			return nil, fmt.Errorf("missing token")
+		return nil, fmt.Errorf("missing token")
 	}
 
 	if strings.ToLower(parts[0]) == "github" {
-			// Handle GitHub token
-			githubUser, err := s.GetGitHubUser(token)
-			if err != nil {
-					return nil, fmt.Errorf("invalid GitHub token: %w", err)
-			}
-			// Convert GitHub user to your User model
-			user := &models.User{
-					ID:    githubUser.ID,
-					Username:  githubUser.Login,
-			}
-			return user, nil
-	} else {
-			// Handle JWT token
-			user, err := s.DecodeJWT(token)
-			if err != nil {
-					return nil, fmt.Errorf("error decoding JWT: %w", err)
-			}
-			return user, nil
+		// Handle GitHub token
+		githubUser, err := s.GetGitHubUser(token)
+		if err != nil {
+			return nil, fmt.Errorf("invalid GitHub token: %w", err)
+		}
+		// Convert GitHub user to your User model
+		user := &models.User{
+			ID:       githubUser.ID,
+			Username: githubUser.Login,
+		}
+		return user, nil
 	}
+	// Handle JWT token
+	user, err := s.DecodeJWT(token)
+	if err != nil {
+		return nil, fmt.Errorf("error decoding JWT: %w", err)
+	}
+	return user, nil
+
 }
 
 func (s *AuthService) DecodeJWT(token string) (*models.User, error) {
@@ -157,7 +157,7 @@ func (s *AuthService) GetGitHubUser(token string) (*models.GitHubUser, error) {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	req.Header.Set("Authorization", "Bearer "+ token)
+	req.Header.Set("Authorization", "Bearer "+token)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -189,10 +189,10 @@ func (s *AuthService) ExchangeGitHubCode(code string) (string, *models.GitHubUse
 	tokenURL := "https://github.com/login/oauth/access_token"
 
 	requestBody, _ := json.Marshal(map[string]string{
-		"client_id": clientID,
+		"client_id":     clientID,
 		"client_secret": clientSecret,
-		"code": code,
-		"redirect_uri": redirectURI,
+		"code":          code,
+		"redirect_uri":  redirectURI,
 	})
 
 	req, err := http.NewRequest("POST", tokenURL, bytes.NewBuffer(requestBody))
@@ -239,13 +239,13 @@ func (s *AuthService) ExchangeGitHubCode(code string) (string, *models.GitHubUse
 func (s *AuthService) GetOrCreateUserIdFromGithub(githubUser *models.GitHubUser) (int, error) {
 	userId, err := s.Repo.GetUserIdByGithubId(githubUser.ID)
 	if err == sql.ErrNoRows {
-			// User doesn't exist, create a new one
-			userId, err = s.Repo.CreateUserFromGithub(githubUser)
-			if err != nil {
-					return 0, err
-			}
-	} else if err != nil {
+		// User doesn't exist, create a new one
+		userId, err = s.Repo.CreateUserFromGithub(githubUser)
+		if err != nil {
 			return 0, err
+		}
+	} else if err != nil {
+		return 0, err
 	}
 	return userId, nil
 }
