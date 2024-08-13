@@ -16,9 +16,11 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 
 	api := router.Group("/api")
 
-	for _, initFunc := range RouteRegistry {
-		initFunc(api, db)
-	}
+	InitAuthRoutes(api, db)
+	InitActivityRoutes(api, db)
+	InitLeaderBoardRoutes(api, db)
+	InitScoreRoutes(api, db)
+	InitUserRoutes(api, db)
 
 	return router
 }

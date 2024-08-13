@@ -9,11 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func init(){
-	RegisterRoutes(UserRoutes)
-}
-
-func UserRoutes(api *gin.RouterGroup, db *sql.DB) {
+func InitUserRoutes(api *gin.RouterGroup, db *sql.DB) {
 	userRepo := &repository.UserRepository{DB: db}
 	userService := &service.UserService{Repo: userRepo}
 	userHandler := &handlers.UserHandler{Service: userService}
@@ -22,6 +18,5 @@ func UserRoutes(api *gin.RouterGroup, db *sql.DB) {
 	{
 		userGroup.POST("", userHandler.CreateUser)
 		userGroup.GET("/:id", userHandler.GetUser)
-		// !! we may not need this because we have a sign up through github
 	}
 }

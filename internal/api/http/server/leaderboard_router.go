@@ -7,11 +7,7 @@ import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
 )
-func init(){
-	RegisterRoutes(LeaderBoardRoutes)
-}
-
-func LeaderBoardRoutes(api *gin.RouterGroup, db *sql.DB) {
+func InitLeaderBoardRoutes(api *gin.RouterGroup, db *sql.DB) {
 	leaderBoardRepo := &repository.LeaderBoardRepository{DB: db}
 	leaderBoardService := &service.LeaderBoardService{Repo: leaderBoardRepo}
 	leaderBoardHandler := &handlers.LeaderBoardHandler{Service: leaderBoardService}
