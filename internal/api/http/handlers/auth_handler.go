@@ -25,18 +25,18 @@ func (h *AuthHandler) DecodeJWT(c *gin.Context) {
 }
 
 func (h *AuthHandler) AuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		user, err := h.Service.AuthenticateUser(c.GetHeader("Authorization"))
+	return func(context *gin.Context) {
+		user, err := h.Service.AuthenticateUser(context.GetHeader("Authorization"))
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-			c.Abort()
+			context.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			context.Abort()
 			return
 		}
 
-		c.Set("user", user)
-		c.Set("userID", user.ID)
+		context.Set("user", user)
+		context.Set("userID", user.ID)
 
-		c.Next()
+		context.Next()
 	}
 }
 
