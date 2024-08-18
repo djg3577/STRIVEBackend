@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtKey = []byte(os.Getenv("MY_SECRET_KEY"))
+var jwtKey = []byte(os.Getenv("JWT_KEY"))
 
 type Claims struct {
 	UserID int `json:"user_id"`
