@@ -7,7 +7,7 @@ import (
 
 var RouteRegistry []func(*gin.RouterGroup, *sql.DB)
 
-func RegisterRoutes(initFunc func(*gin.RouterGroup, *sql.DB)){
+func RegisterRoutes(initFunc func(*gin.RouterGroup, *sql.DB)) {
 	RouteRegistry = append(RouteRegistry, initFunc)
 }
 

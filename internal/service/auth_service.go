@@ -18,6 +18,12 @@ import (
 
 type TokenType string
 
+type tokenResponse struct {
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	Scope       string `json:"scope"`
+}
+
 const (
 	TokenTypeGithub TokenType = "github"
 	TokenTypeJWT    TokenType = "jwt"
@@ -190,7 +196,6 @@ func (authService *AuthService) GetGitHubUser(token string) (*models.GitHubUser,
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
-
 	var user models.GitHubUser
 
 	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
@@ -234,13 +239,7 @@ func (authService *AuthService) ExchangeGitHubCode(code string) (string, *models
 	if resp.StatusCode != http.StatusOK {
 		return "", nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
-
-	var tokenResponse struct {
-		AccessToken string `json:"access_token"`
-		TokenType   string `json:"token_type"`
-		Scope       string `json:"scope"`
-	}
-
+	var tokenResponse tokenResponse
 	if err := json.NewDecoder(resp.Body).Decode(&tokenResponse); err != nil {
 		return "", nil, fmt.Errorf("failed to decode response: %w", err)
 	}

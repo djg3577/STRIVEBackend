@@ -12,7 +12,7 @@ type DatabaseConnector interface {
 
 type PostgresConnector struct{}
 
-func (p *PostgresConnector) Connect(cfg *config.Config) (*sql.DB, error){
+func (p *PostgresConnector) Connect(cfg *config.Config) (*sql.DB, error) {
 	connStr := "user=" + cfg.DBUser + " password=" + cfg.DBPassword + " dbname=" + cfg.DBName + " host=" + cfg.DBHost + " port=" + cfg.DBPort + " sslmode=disable"
 	return sql.Open("postgres", connStr)
 }

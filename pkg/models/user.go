@@ -11,5 +11,5 @@ type User struct {
 
 type GitHubUser struct {
 	Login string `json:"login"`
-	ID int `json:"id"`
+	ID    int    `json:"id"`
 }

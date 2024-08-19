@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
 )
+
 func InitLeaderBoardRoutes(api *gin.RouterGroup, db *sql.DB) {
 	leaderBoardRepo := &repository.LeaderBoardRepository{DB: db}
 	leaderBoardService := &service.LeaderBoardService{Repo: leaderBoardRepo}
