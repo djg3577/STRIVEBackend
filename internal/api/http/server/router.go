@@ -19,7 +19,6 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	InitAuthRoutes(api, db)
 	InitActivityRoutes(api, db)
 	InitLeaderBoardRoutes(api, db)
-	InitScoreRoutes(api, db)
 	InitUserRoutes(api, db)
 
 	return router
