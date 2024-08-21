@@ -13,6 +13,9 @@ type Config struct {
 	DBName     string
 	DBHost     string
 	DBPort     string
+	RedisHost    string
+	RedisPassword string
+	RedisDB      int
 }
 
 type ConfigLoader interface {

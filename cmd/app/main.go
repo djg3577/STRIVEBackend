@@ -1,14 +1,12 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
-	_ "github.com/lib/pq"
-
+	"STRIVEBackend/internal/api/http/scheduler"
 	"STRIVEBackend/internal/api/http/server"
 	"STRIVEBackend/internal/config"
 	"STRIVEBackend/internal/database"
+	"log"
+	"net/http"
 )
 
 func main() {
@@ -19,8 +17,12 @@ func main() {
 	db := database.SetupDatabase(cfg, connector)
 	defer db.Close()
 
-	router := server.SetupRouter(db)
+	redisClient := database.SetupRedis(cfg)
 
+	jobScheduler := scheduler.NewJobScheduler(redisClient.Client)
+	go jobScheduler.Start()
+
+	router := server.SetupRouter(db)
 	handler := server.SetupCORS(router)
 
 	startServer(handler)
