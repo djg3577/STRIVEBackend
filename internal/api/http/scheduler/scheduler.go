@@ -56,7 +56,7 @@ func (js *JobScheduler) Start() {
 
 func TestJob(){
 	log.Println("Running test job...")
-	//simulate work
+	
 	time.Sleep((1 * time.Second))
 	log.Println("Test job completed.")
 }
