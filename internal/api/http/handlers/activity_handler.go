@@ -45,7 +45,6 @@ func (h *ActivityHandler) LogActivity(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error in getting user id from github id"})
 		return
 	}
-	// !! NEXT STEP IS IF THEIR IS NO GIT HUB ID ATTACHED WE INSERT AND ON INSERT WE MATCH TO THE CURRENT USER ID
 
 	activity.UserID = internalUserId
 
@@ -74,11 +73,7 @@ func (h *ActivityHandler) LogActivity(c *gin.Context) {
 }
 
 func (h *ActivityHandler) GetActivityTotals(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not authenticated"})
-		return
-	}
+	userID, _ := c.Get("userID")
 
 	activity_totals, err := h.Service.GetActivityTotals(userID.(int))
 	if err != nil {
