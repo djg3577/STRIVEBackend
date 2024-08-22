@@ -21,5 +21,6 @@ func InitAuthRoutes(api *gin.RouterGroup, db *sql.DB) {
 		authGroup.POST("/sign-up", authHandler.SignUp)
 		authGroup.POST("/verify-email", authHandler.VerifyEmail)
 		authGroup.POST("/github", authHandler.GitHubLogin)
+		authGroup.GET("/testingRedis", authHandler.TestingRedis)
 	}
 }

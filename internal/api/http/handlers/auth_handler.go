@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"STRIVEBackend/internal/api/http/scheduler"
 	"STRIVEBackend/internal/service"
 	"STRIVEBackend/internal/util"
 	"STRIVEBackend/pkg/models"
@@ -179,4 +180,9 @@ func (h *AuthHandler) GitHubLogin(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"token": token, "user": user})
+}
+
+func (h *AuthHandler) TestingRedis(c *gin.Context) {
+	scheduler.TestJob()
+	c.JSON(http.StatusOK, gin.H{"message": "Test job trigger successfully"})
 }

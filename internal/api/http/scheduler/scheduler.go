@@ -1,4 +1,3 @@
-// scheduler/scheduler.go
 package scheduler
 
 import (
@@ -28,10 +27,8 @@ func (js *JobScheduler) RunDailyJob(dailyJob func()) {
 	}
 
 	if jobRan == 0 {
-		// If the job has not run today, execute it
 		dailyJob()
 
-		// Set the key in Redis with an expiration of 24 hours
 		err := js.redisClient.Set(ctx, dailyJobKey, "true", 24*time.Hour).Err()
 		if err != nil {
 			log.Fatalf("Could not set Redis key: %v", err)
@@ -55,4 +52,15 @@ func (js *JobScheduler) Start() {
 			})
 		}
 	}
+}
+
+func TestJob(){
+	log.Println("Running test job...")
+	//simulate work
+	time.Sleep((1 * time.Second))
+	log.Println("Test job completed.")
+}
+
+func (js *JobScheduler) TriggerTestJob() {
+	js.RunDailyJob(TestJob)
 }

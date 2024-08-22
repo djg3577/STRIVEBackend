@@ -20,6 +20,9 @@ func main() {
 	redisClient := database.SetupRedis(cfg)
 
 	jobScheduler := scheduler.NewJobScheduler(redisClient.Client)
+
+	jobScheduler.RunDailyJob(scheduler.TestJob)
+
 	go jobScheduler.Start()
 
 	router := server.SetupRouter(db)
