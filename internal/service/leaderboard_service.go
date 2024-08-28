@@ -5,7 +5,7 @@ import (
 )
 
 type LeaderBoardService struct {
-	Repo *repository.LeaderBoardRepository
+	Repo repository.LeaderBoardRepositoryInterface
 }
 
 func (s *LeaderBoardService) GetTopScores() ([]repository.UserScore, error) {

@@ -6,6 +6,10 @@ type LeaderBoardRepository struct {
 	DB *sql.DB
 }
 
+type LeaderBoardRepositoryInterface interface {
+	GetTopScores() ([]UserScore, error)
+}
+
 type UserScore struct {
 	Username string `json:"username"`
 	Score    int    `json:"score"`
