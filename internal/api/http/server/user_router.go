@@ -18,6 +18,5 @@ func InitUserRoutes(api *gin.RouterGroup, db *sql.DB) {
 	{
 		userGroup.POST("", userHandler.CreateUser)
 		userGroup.GET("/:id", userHandler.GetUser)
-		// !! we may not need this because we have a sign up through github
 	}
 }

@@ -15,11 +15,12 @@ func InitAuthRoutes(api *gin.RouterGroup, db *sql.DB) {
 	authHandler := &handlers.AuthHandler{Service: authService}
 
 	authGroup := api.Group("/auth")
-	{ 
+	{
 		authGroup.POST("/decode-jwt", authHandler.DecodeJWT)
 		authGroup.POST("/login", authHandler.Login)
 		authGroup.POST("/sign-up", authHandler.SignUp)
 		authGroup.POST("/verify-email", authHandler.VerifyEmail)
 		authGroup.POST("/github", authHandler.GitHubLogin)
+		authGroup.GET("/testingRedis", authHandler.TestingRedis)
 	}
 }

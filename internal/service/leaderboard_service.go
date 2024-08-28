@@ -4,10 +4,10 @@ import (
 	"STRIVEBackend/internal/repository"
 )
 
-type LeaderboardService struct {
+type LeaderBoardService struct {
 	Repo *repository.LeaderBoardRepository
 }
 
-func (s *LeaderboardService) GetTopScores() ([]repository.UserScore, error) {
+func (s *LeaderBoardService) GetTopScores() ([]repository.UserScore, error) {
 	return s.Repo.GetTopScores()
 }

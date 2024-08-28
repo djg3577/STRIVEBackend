@@ -25,13 +25,13 @@ func (s *ActivityService) GetActivityDates(userID int) (*models.ActivityDates, e
 func (s *ActivityService) GetOrCreateUserIdFromGithub(githubUser *models.GitHubUser) (int, error) {
 	userId, err := s.Repo.GetUserIdByGithubId(githubUser.ID)
 	if err == sql.ErrNoRows {
-			// User doesn't exist, create a new one
-			userId, err = s.Repo.CreateUserFromGithub(githubUser)
-			if err != nil {
-					return 0, err
-			}
-	} else if err != nil {
+		// User doesn't exist, create a new one
+		userId, err = s.Repo.CreateUserFromGithub(githubUser)
+		if err != nil {
 			return 0, err
+		}
+	} else if err != nil {
+		return 0, err
 	}
 	return userId, nil
 }

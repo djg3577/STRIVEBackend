@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"STRIVEBackend/internal/api/http/scheduler"
 	"STRIVEBackend/internal/service"
 	"STRIVEBackend/internal/util"
 	"STRIVEBackend/pkg/models"
@@ -25,18 +26,18 @@ func (h *AuthHandler) DecodeJWT(c *gin.Context) {
 }
 
 func (h *AuthHandler) AuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		user, err := h.Service.AuthenticateUser(c.GetHeader("Authorization"))
+	return func(context *gin.Context) {
+		user, err := h.Service.AuthenticateUser(context.GetHeader("Authorization"))
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-			c.Abort()
+			context.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			context.Abort()
 			return
 		}
 
-		c.Set("user", user)
-		c.Set("userID", user.ID)
+		context.Set("user", user)
+		context.Set("userID", user.ID)
 
-		c.Next()
+		context.Next()
 	}
 }
 
@@ -122,48 +123,47 @@ func (h *AuthHandler) VerifyEmail(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Email verified successfully"})
 }
 
-
 func (h *AuthHandler) GitHubAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-			authHeader := c.GetHeader("Authorization")
-			fmt.Println()
-			if authHeader == "" {
-					c.JSON(http.StatusUnauthorized, gin.H{"error": "No authorization header provided"})
-					c.Abort()
-					return
-			}
+		authHeader := c.GetHeader("Authorization")
+		fmt.Println()
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "No authorization header provided"})
+			c.Abort()
+			return
+		}
 
-			bearerToken := strings.Split(authHeader, " ")
-			if len(bearerToken) != 2 {
-					c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
-					c.Abort()
-					return
-			}
+		bearerToken := strings.Split(authHeader, " ")
+		if len(bearerToken) != 2 {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
+			c.Abort()
+			return
+		}
 
-			token := bearerToken[1]
-			githubUser, err := h.Service.GetGitHubUser(token)
-			if err != nil {
-					c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid GitHub token"})
-					c.Abort()
-					return
-			}
-// !! NEED TO FIX DUPLICATE CODE HERE
-			internalUserId, err := h.Service.GetOrCreateUserIdFromGithub(githubUser)
-			if err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get or create user from GitHub"})
-					c.Abort()
-					return
-			}
+		token := bearerToken[1]
+		githubUser, err := h.Service.GetGitHubUser(token)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid GitHub token"})
+			c.Abort()
+			return
+		}
+		// !! NEED TO FIX DUPLICATE CODE HERE
+		internalUserId, err := h.Service.GetOrCreateUserIdFromGithub(githubUser)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get or create user from GitHub"})
+			c.Abort()
+			return
+		}
 
-			// Store the GitHub user ID in the context
-			c.Set("userID", internalUserId)
-			c.Set("githubUser", githubUser)
-			fmt.Println("GitHub user: ", githubUser)
-			c.Next()
+		// Store the GitHub user ID in the context
+		c.Set("userID", internalUserId)
+		c.Set("githubUser", githubUser)
+		fmt.Println("GitHub user: ", githubUser)
+		c.Next()
 	}
 }
 
-func (h *AuthHandler) GitHubLogin(c *gin.Context){
+func (h *AuthHandler) GitHubLogin(c *gin.Context) {
 	var request struct {
 		Code string `json:"code" binding:"required"`
 	}
@@ -180,4 +180,9 @@ func (h *AuthHandler) GitHubLogin(c *gin.Context){
 	}
 
 	c.JSON(http.StatusOK, gin.H{"token": token, "user": user})
+}
+
+func (h *AuthHandler) TestingRedis(c *gin.Context) {
+	scheduler.TestJob()
+	c.JSON(http.StatusOK, gin.H{"message": "Test job trigger successfully"})
 }
