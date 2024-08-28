@@ -1,3 +1,8 @@
+# STRIVE Backend
+
+This is the backend service for the STRIVE app, which tracks daily coding time and logs it, and includes a leaderboard of all users!
+
+
 # HOW TO START
 ##### start by downloading the vscode extension called 'HabitTrackerForDevs':
 [LINK TO VSCODE MARKETPLACE](https://marketplace.visualstudio.com/items?itemName=DanielGuillen.habittrackerfordevs)
@@ -18,10 +23,3 @@
 
 ##### You can now log in and see the real time leaderboard to see how you compare to others:
 ![image](https://github.com/user-attachments/assets/633c7db9-d750-490b-85e9-61afd14952e2)
-
-
-
-
-# STRIVE Backend
-
-This is the backend service for the STRIVE app, which tracks daily coding time and logs it, and includes a leaderboard of all users!
