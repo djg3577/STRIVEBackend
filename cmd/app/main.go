@@ -19,9 +19,12 @@ func main() {
 
 	redisClient := database.SetupRedis(cfg)
 
-	jobScheduler := scheduler.NewJobScheduler(redisClient.Client)
+	jobScheduler := scheduler.NewJobScheduler(redisClient.Client, "110483089", "djg3577" )
 
-	jobScheduler.RunDailyJob(scheduler.TestJob)
+	jobScheduler.RunDailyJob(func(){
+		log.Println("Running initial job...")
+		jobScheduler.PerformGithubCommit()
+	})
 
 	go jobScheduler.Start()
 
