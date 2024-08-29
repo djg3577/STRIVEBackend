@@ -88,7 +88,7 @@ func (js *JobScheduler) PerformGithubCommit() {
 		return
 	}
 
-	log.Panicln("Daily commit completed successfully ")
+	log.Println("Daily commit completed successfully ")
 }
 
 func TestJob() {
