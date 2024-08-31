@@ -5,7 +5,6 @@ import (
 	"STRIVEBackend/internal/api/http/server"
 	"STRIVEBackend/internal/config"
 	"STRIVEBackend/internal/database"
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -23,12 +22,9 @@ func main() {
 	jobScheduler := scheduler.NewJobScheduler(redisClient.Client, "110483089", "djg3577" )
 
 	jobScheduler.RunDailyJob(func(){
-		log.Println("Running initial job...")
 		jobScheduler.PerformGithubCommit()
 	})
-	jobScheduler.PerformGithubCommit()
 	go jobScheduler.Start()
-	fmt.Println("STARTING JOB")
 
 	router := server.SetupRouter(db)
 	handler := server.SetupCORS(router)
